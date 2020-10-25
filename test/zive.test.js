@@ -441,13 +441,11 @@ describe('Module Method Check', function() {
                         cmdId: zclId.functional('lightingColorCtrl', 'moveToSaturation').value,
                         statusCode: 129
                     },
-                    foundArgs = [ dstAddr, dstEpId, cId, 'defaultRsp', defaultRspPayload, cfg ];
-
-                if (foundationStub.calledOnce &&
-                    _.isEqual(foundationStub.firstCall.args, foundArgs)) {
-                    foundationStub.restore();
-                    done();
-                }
+                    foundArgs = [ dstAddr, dstEpId, cId, 'defaultRsp', defaultRspPayload, Object.assign({response:true}, cfg) ];
+                if (!foundationStub.calledOnce) return done(new Error('expected to be called'));
+                if(!_.isEqual(foundationStub.firstCall.args, foundArgs)) return done(new Error('incorrect arguments'));
+                foundationStub.restore();
+                done();
             }, 50);
         });
 
@@ -469,15 +467,17 @@ describe('Module Method Check', function() {
                         cmdId: zclId.functional('lightingColorCtrl', 'moveToHue').value,
                         statusCode: 1
                     },
-                    foundArgs = [ dstAddr, dstEpId, cId, 'defaultRsp', defaultRspPayload, cfg ];
+                    foundArgs = [ dstAddr, dstEpId, cId, 'defaultRsp', defaultRspPayload, Object.assign({response:true}, cfg) ];
 
-                if (moveToHueStub.calledOnce &&
-                    foundationStub.calledOnce &&
-                    _.isEqual(foundationStub.firstCall.args, foundArgs)) {
-                    moveToHueStub.restore();
-                    foundationStub.restore();
-                    done();
-                }
+                if (!moveToHueStub.calledOnce) return done(new Error('expected moveToHueStub to be called'));
+                if (!foundationStub.calledOnce) return done(new Error('expected to be called'));
+                if(!_.isEqual(foundationStub.firstCall.args, foundArgs)) return done(new Error('incorrect arguments'));
+
+                
+                moveToHueStub.restore();
+                foundationStub.restore();
+                done();
+                    
             }, 50);
         });
 
@@ -485,6 +485,7 @@ describe('Module Method Check', function() {
             var cmdObj = ziee.get('genGroups', 'cmds', 'add'),
                 argObj = { groupid: 1, groupname: 'xxx' },
                 addStub = sinon.stub(cmdObj, 'exec', function (zapp, argObj, callback) {
+                    console.log({arguments})
                     callback(null);
                 }),
                 foundationStub = sinon.stub(zive, 'foundation', function () {});
@@ -496,6 +497,9 @@ describe('Module Method Check', function() {
             zive.functionalHandler(afMsg);
 
             setTimeout(function () {
+                if (!addStub.calledOnce) return done(new Error('expected addStub to be called'));
+                if (foundationStub.callCount == 0) return done(new Error('expected foundationStub to not be called, was called '+foundationStub.callCount+' times'));
+
                 if (addStub.calledOnce &&
                     foundationStub.callCount === 0) {
                     addStub.restore();
@@ -527,7 +531,7 @@ describe('Module Method Check', function() {
                         cmdId: zclId.functional('genGroups', 'add').value,
                         statusCode: 0
                     },
-                    foundArgs = [ dstAddr, dstEpId, zclId.cluster('genGroups').value, 'defaultRsp', defaultRspPayload, cfg ];
+                    foundArgs = [ dstAddr, dstEpId, zclId.cluster('genGroups').value, 'defaultRsp', defaultRspPayload, Object.assign({response:true}, cfg) ];
 
                 if (addStub.calledOnce &&
                     foundationStub.calledOnce &&

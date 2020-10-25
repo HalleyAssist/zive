@@ -24,6 +24,6 @@
     "chai": "^3.5.0",
     "mocha": "^2.5.3",
     "sinon": "^1.17.5",
-    "ziee": "^0.3.0"
+    "ziee": "git+https://github.com/HalleyAssist/ziee.git"
   }
 }
