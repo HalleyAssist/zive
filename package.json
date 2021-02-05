@@ -22,6 +22,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^2.5.3",
+    "q-lite": "git+https://github.com/HalleyAssist/q-lite.git",
     "sinon": "^1.17.5",
     "ziee": "git+https://github.com/HalleyAssist/ziee.git"
   }
